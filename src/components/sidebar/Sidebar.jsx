@@ -7,7 +7,7 @@ import {
   ChevronUp,
   Mail,
 } from "lucide-react";
-
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -53,21 +53,35 @@ const items = [
     url: "/history",
     icon: Calendar,
   },
-  // {
-  //   title: "Check Emails",
-  //   url: "/check-emails",
-  //   icon: Mail,
-  // },
+  {
+    title: "Check Emails",
+    url: "/check-emails",
+    icon: Mail,
+  },
 ];
 
 export function AppSidebar() {
   const useAuth = () => useContext(AuthContext);
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
+  const [user, setUser] = useState(null);
   const handleLogout = async () => {
-    await axiosI.get("/logout");
+    await axiosI.get("/auth/logout");
     localStorage.removeItem("user");
     logout();
   };
+  const getRole = async () => {
+    try {
+      let user = localStorage.getItem("user");
+      user = JSON.parse(user);
+      setUser(user);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    getRole();
+  }, []);
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -114,9 +128,18 @@ export function AppSidebar() {
                 side="top"
                 className="w-60 bg-white dark:bg-gray-800 shadow-lg rounded-md"
               >
-                <DropdownMenuItem>
-                  <span>Account</span>
-                </DropdownMenuItem>
+                {isAuthenticated && user?.role == "admin" ? (
+                  <DropdownMenuItem>
+                    <Link
+                      to="/update-report"
+                      className="flex items-center gap-2"
+                    >
+                      <span>Requests</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ) : (
+                  ""
+                )}
                 <DropdownMenuItem onClick={handleLogout}>
                   <span>Sign out</span>
                 </DropdownMenuItem>

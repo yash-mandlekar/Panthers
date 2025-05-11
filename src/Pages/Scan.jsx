@@ -28,13 +28,16 @@ export default function ScanPage() {
 
       setResult(res.data);
     } catch (error) {
-      console.error("Scan failed:", error);
-      setResult("Error contacting prediction service.");
+      console.error("Scan failed:", error.response.data.error);
+      setResult({isPhishing:true});
     } finally {
       setLoading(false);
       setOpen(true);
     }
   };
+
+
+  
 
   return (
     <div className="p-6 space-y-6">

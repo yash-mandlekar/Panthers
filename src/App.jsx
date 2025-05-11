@@ -11,6 +11,7 @@ import Reports from "./Pages/Reports";
 import History from "./Pages/History";
 import CheckEmails from "./Pages/CheckEmails";
 import AddReport from "./Pages/AddReport";
+import UpdateReport from "./Pages/UpdateReport";
 
 // --- Auth Context Setup ---
 export const AuthContext = createContext();
@@ -28,7 +29,7 @@ const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const response = await axiosI.get("/api/user/me");
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("user", JSON.stringify(response.data));
       login();
     } catch (error) {
       if (error.response.status === 401) {
@@ -118,6 +119,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <AddReport />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/update-report"
+          element={
+            <PrivateRoute>
+              <UpdateReport />
             </PrivateRoute>
           }
         />

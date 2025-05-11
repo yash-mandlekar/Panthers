@@ -42,12 +42,16 @@ export default function ReportsPage() {
     if (status === "flagged") return "warning";
     return "default";
   };
-
+  const getBadgeSpamVariant = (result) => {
+    if (result === "Malicious") return "destructive";
+    if (result === "Suspicious") return "secondary";
+    return "default";
+  };
   const getReportStatus = async () => {
     try {
       const { data } = await axiosI.get("/api/community");
       console.log(data);
-      
+
       setreports(data);
     } catch (err) {
       console.error(err);
@@ -77,6 +81,7 @@ export default function ReportsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>URL</TableHead>
+                <TableHead>Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Reported By</TableHead>
                 <TableHead>Date</TableHead>
@@ -86,6 +91,15 @@ export default function ReportsPage() {
               {paginatedReports.map((report, i) => (
                 <TableRow key={i}>
                   <TableCell>{report.url}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={getBadgeSpamVariant(
+                        report.isPhishing ? "Malicious" : "Safe"
+                      )}
+                    >
+                      {report.isPhishing ? "Malicious" : "Safe"}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Badge variant={getBadgeVariant(report.status)}>
                       {report.status}
